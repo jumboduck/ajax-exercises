@@ -27,30 +27,36 @@ function generatePaginationButtons(next, prev) {
                 <button onclick="writeToDocument('${next}')">Next</button>`;
     } else if (next && !prev) {
         return `<button onclick="writeToDocument('${next}')">Next</button>`;
-    } else {
-        return `<button onclick="writeToDocument('${prev}')">Next</button>`;
+    } else if (!next && prev) {
+        return `<button onclick="writeToDocument('${prev}')">Previous</button>`;
     }
 }
 
 function writeToDocument(url) {
+    debugger;
+    var tableRows = [];
     var el = document.getElementById("data");
-    el.innerHTML = "";
 
     getData(url, function (data) {
-        var pagination;
+        var pagination = "";
+
         if (data.next || data.previous) {
             pagination = generatePaginationButtons(data.next, data.previous);
         }
-        var tableRows = [];
         data = data.results;
         var tableHeaders = getTableHeaders(data[0]);
 
         data.forEach(function (item) {
             var dataRow = [];
+
             Object.keys(item).forEach(function (key) {
-                var rowData = item[key].toString();
-                var truncatedData = rowData.substring(0, 15);
-                dataRow.push(`<td>${truncatedData}</td>`);
+                if (item[key] === null) {
+                    dataRow.push(`<td>n/a</td>`);
+                } else {
+                    var rowData = item[key].toString();
+                    var truncatedData = rowData.substring(0, 15);
+                    dataRow.push(`<td>${truncatedData}</td>`);
+                }
             });
             tableRows.push(`<tr>${dataRow}</tr>`);
         });
